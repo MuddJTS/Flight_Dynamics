@@ -104,10 +104,10 @@ a = [a1',a2'];
 % yyaxis left
 % plot(t,xv(:,3),'g') % Plot a
 % legend('altitude','acceleration','velocity','mass')
-
+% 
 % Max Q calculation and plot
 % MaxQ(t,xv(:,2),xv(:,3));
-
+% 
 % Plot of Mach number over travel
 % figure (2)
 % c = c_atm(xv(:,3));
