@@ -22,13 +22,13 @@ CDVector = [CD_full; CD_dart];
 CD = interp1(Machvector,CDVector(n+1,:), u./c, 'pchip');
 
 % Used to plot drag coefficients
-CD_dart_plot = interp1(Machvector, CD_dart, 0:.1:7,'linear');
-CD_full_plot = interp1(Machvector, CD_full, 0:.1:7,'linear');
-plot(Machvector,CD_dart/(.1*.00811/.001338),Machvector,CD_full);
-xlabel('Mach Number')
-ylabel('Cd')
-title(' Drag Coefficient vs. Mach Number')
-legend('Dart','Full Rocket')
+% CD_dart_plot = interp1(Machvector, CD_dart, 0:.1:7,'linear');
+% CD_full_plot = interp1(Machvector, CD_full, 0:.1:7,'linear');
+% plot(Machvector,CD_dart/(.1*.00811/.001338),Machvector,CD_full);
+% xlabel('Mach Number')
+% ylabel('Cd')
+% title(' Drag Coefficient vs. Mach Number')
+% legend('Dart','Full Rocket')
 
 end
 

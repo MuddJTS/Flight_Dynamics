@@ -7,11 +7,11 @@
 
 
 % % % % % % % % % % % % % % Values from loki for testing Apogee = 70713.6 Meters % % % % % % % % % % % % % % % % % % % % % % 
-tf = 120; % end time for simulation
+tf = 150; % end time for simulation
 dt = .1;
 Alt = 0;%1401; % altitude MSL of spaceport America
 burntime = 2.1; %to change motor specs, open thrustcurvesh.m. This code assumes separation occurs imediately after burn time ends
-trange = [0, burntime]; % time before separation
+trange = [0 : dt : burntime]; % time before separation
 specific_impulse = 228.7; % s Calculate as total impulse/propellant mass
 exit_velocity = specific_impulse * 9.807;
 
@@ -77,6 +77,7 @@ a1 = afunc(t1, xv1); % Calculate the acceleration vector
 Ap = Ap2;
 n = 1;
 
+disp("Separation Triggered");
 ja_burntime = burntime +.001; %"just after burntime" this avoids this step getting any thrust
 trangecoast = [ja_burntime, tf]; % The starting and ending times
 % xv_initialcoast = [m_dart, xv1(end,2), xv1(end,3)]; % Initial mass (kilograms), velocity, and altitude (meters).
@@ -84,20 +85,19 @@ xv_initialcoast = [xv1(end, 2), xv1(end, 3) + initial_piston_d, xv1(end, 2), xv1
 % Altitude must be MSL, not AGL (alt is at spaceport america)
 % wrapper func
 sim_func = @(t, xv)  separation_event(t, xv, m_dart, m_booster, Ap1, Ap2);
-[t2, xv2] = ode45(sim_func, trangecoast, xv_initialcoast); % Integrate the rocket equation
+[t2, xv2] = ode15s(sim_func, trangecoast, xv_initialcoast); % Integrate the rocket equation
 m_vec = m_dart + zeros(size(xv2, 1), 1); % need to get vector back into the form we want
 xv2_dart = [m_vec, xv2(:, 1:2)];
 % a2 = afunc(t2, xv2_dart); % Calculate the acceleration vector
-a2 = diff(xv2_dart(:, 2)) ./ diff(t2);
+a2 = diff(xv2_dart(:, 3)) ./ diff(t2);
 t = [t1',t2'];
 xv = [xv1',xv2_dart']';
 
 a = [a1',a2'];
 % using ode45
 
-figure(1);
 yyaxis right
-plot(t(2:end),a','b--',t,xv(:,2),'r',t,xv(:,1),'m') % Plot v, x, mass vs t
+plot(t,a','b--',t,xv(:,2),'r',t,xv(:,1),'m') % Plot a, v, x,vs t
 yyaxis left
 plot(t,xv(:,3),'g') % Plot a
 legend('altitude','acceleration','velocity','mass')
@@ -108,13 +108,10 @@ MaxQ(t,xv(:,2),xv(:,3));
 % Plot of Mach number over travel
 figure (2)
 c = c_atm(xv(:,3));
-plot(t, abs(xv(:,2))./c)
+plot(abs(xv(:,2))./c)
 xlabel('time (s)')
 ylabel('Mach number')
 title('Mach number over flight path')
-
-max_speed_mach = max(abs(xv(:,2))./c)
-apogee_km = max(xv(:, 3))/1000
 
 function [xvdot, CD] = rockeqn_var(t,xv);
 % The rocket equation where T, P, rho, and g change with
@@ -185,7 +182,7 @@ global initial_piston_d
 piston_area = Ap_dart; % assume piston area is same as dart cross-section
 initialT = 773.15; % K; based on estimate of 500 C burn temp.
 initialV = initial_piston_d * piston_area;
-charge_mass = 10; % g; 0.015 mol of gaseous products per gram charge
+charge_mass = 1; % g; 0.015 mol of gaseous products per gram charge
 initialP = (charge_mass*0.015 * 8.314 * initialT) / initialV;% N/m^2; nRT / V; R = 8.314 J/(K-mol)
 
 % adiabatic expansion: P*V^gamma = constant
@@ -198,13 +195,13 @@ P = adiabatic_const / pistonV^gamma;
 
 % Make sure we are still inside the piston
 piston_length = 0.15; % m; 15 cm
-if 1 || deltaX > piston_length || (u_dart < 0 || u_booster < 0)
+if deltaX > piston_length || (u_dart < 0 || u_booster < 0)
     P = 0
 end
 
 D_assy = 0.5.*CD_assy.*Ap_assy.*rho_boost.*u_booster.*abs(u_booster); 
 D_dart = 0.5.*CD_dart.*Ap_dart.*rho_dart.*u_dart.*abs(u_dart); 
-D_booster = D_assy - D_dart; % assumption! CD for booster after separation isn't super relavent due to tumbling, so don't expect accuracy here
+D_booster = D_assy; % assumption! CD for booster after separation isn't super relavent due to tumbling, so don't expect accuracy here
 u_dart_dot = - D_dart/m_dart - gloc_dart*cos(theta) + P*Ap_dart / m_dart;
 u_booster_dot = - D_booster/m_booster - gloc_boost*cos(theta) - P*Ap_dart / m_booster;
 
