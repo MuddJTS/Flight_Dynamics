@@ -7,9 +7,9 @@
 
 
 % % % % % % % % % % % % % % Values from loki for testing Apogee = 70713.6 Meters % % % % % % % % % % % % % % % % % % % % % % 
-tf = 100; % end time for simulation
+tf = 150; % end time for simulation
 dt = .1;
-Alt = 0 %1401; % altitude MSL of spaceport America
+Alt = 0; %1401; % altitude MSL of spaceport America
 burntime = 2.1; %to change motor specs, open thrustcurvesh.m. This code assumes separation occurs imediately after burn time ends
 specific_impulse = 228.7; % s Calculate as total impulse/propellant mass
 exit_velocity = specific_impulse * 9.807;
@@ -19,7 +19,7 @@ Ap2 = pi*(1.625*.0254./2)^2; %projected area of dart
 
 
 m_dart = 14*.4536; %kg 0.453592 kg per lbs
-m_booster = 26*.4536; %kg without propellant loaded
+m_booster = 16*.4536; %kg without propellant loaded
 m_propellant = 43*.4536; %kg of propellant
 
 
@@ -46,7 +46,8 @@ m_propellant = 43*.4536; %kg of propellant
 % m_booster = 34.8*.4536; %kg without propellant loaded
 % m_propellant = 43*.4536; %kg of propellant
 % % 
-% m_initial = m_dart + m_booster + m_propellant; % total mass in kg of entire system
+m_initial = m_dart + m_booster + m_propellant; % total mass in kg of entire system
+
 
 % due to the layout of the initial program, additional inputs were hard to
 % add to functions.  global variables were used so equations inside
