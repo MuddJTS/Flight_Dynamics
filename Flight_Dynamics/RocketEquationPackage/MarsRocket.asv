@@ -7,11 +7,11 @@
 
 
 % % % % % % % % % % % % % % Values from loki for testing Apogee = 70713.6 Meters % % % % % % % % % % % % % % % % % % % % % % 
-tf = 150; % end time for simulation
+tf = 00; % end time for simulation
 dt = .1;
 Alt = 0;%1401; % altitude MSL of spaceport America
 burntime = 2.1; %to change motor specs, open thrustcurvesh.m. This code assumes separation occurs imediately after burn time ends
-trange = [0 : dt : burntime]; % time before separation
+trange = [0, burntime]; % time before separation
 specific_impulse = 228.7; % s Calculate as total impulse/propellant mass
 exit_velocity = specific_impulse * 9.807;
 
@@ -20,7 +20,7 @@ Ap2 = pi*(1.625*.0254)^2/4; %projected area of dart
 
  
 m_dart = 14*.4536; %kg 0.453592 kg per lbs
-m_booster = 16*.4536; %kg without propellant loaded
+m_booster = 26*.4536; %kg without propellant loaded
 m_propellant = 43*.4536; %kg of propellant
 
 m_initial = m_dart + m_booster + m_propellant; % total mass in kg of entire system
@@ -77,41 +77,47 @@ a1 = afunc(t1, xv1); % Calculate the acceleration vector
 Ap = Ap2;
 n = 1;
 
-disp("Separation Triggered");
 ja_burntime = burntime +.001; %"just after burntime" this avoids this step getting any thrust
-trangecoast = [ja_burntime, tf]; % The starting and ending times
+trangecoast = [ja_burntime:dt:tf]; % The starting and ending times
 % xv_initialcoast = [m_dart, xv1(end,2), xv1(end,3)]; % Initial mass (kilograms), velocity, and altitude (meters).
 xv_initialcoast = [xv1(end, 2), xv1(end, 3) + initial_piston_d, xv1(end, 2), xv1(end, 3)]; % initial_piston_d separation, same velocity
 % Altitude must be MSL, not AGL (alt is at spaceport america)
 % wrapper func
-sim_func = @(t, xv)  separation_event(t, xv, m_dart, m_booster, Ap1, Ap2);
-[t2, xv2] = ode15s(sim_func, trangecoast, xv_initialcoast); % Integrate the rocket equation
+% !!! separation_charge_mass is a parameter to be set by an external
+% script; otherwise, set it here
+% separation_charge_mass = 2; % g black powder, produces 0.015 mol gas/g
+sim_func = @(t, xv)  separation_event(t, xv, m_dart, m_booster, Ap1, Ap2, separation_charge_mass);
+[t2, xv2] = ode45(sim_func, trangecoast, xv_initialcoast); % Integrate the rocket equation
 m_vec = m_dart + zeros(size(xv2, 1), 1); % need to get vector back into the form we want
 xv2_dart = [m_vec, xv2(:, 1:2)];
 % a2 = afunc(t2, xv2_dart); % Calculate the acceleration vector
-a2 = diff(xv2_dart(:, 3)) ./ diff(t2);
+a2 = diff(xv2_dart(:, 2)) ./ diff(t2);
 t = [t1',t2'];
 xv = [xv1',xv2_dart']';
 
 a = [a1',a2'];
 % using ode45
 
-yyaxis right
-plot(t,a','b--',t,xv(:,2),'r',t,xv(:,1),'m') % Plot a, v, x,vs t
-yyaxis left
-plot(t,xv(:,3),'g') % Plot a
-legend('altitude','acceleration','velocity','mass')
+% figure(1);
+% yyaxis right
+% plot(t(2:end),a','b--',t,xv(:,2),'r',t,xv(:,1),'m') % Plot v, x, mass vs t
+% yyaxis left
+% plot(t,xv(:,3),'g') % Plot a
+% legend('altitude','acceleration','velocity','mass')
 
 % Max Q calculation and plot
-MaxQ(t,xv(:,2),xv(:,3));
+% MaxQ(t,xv(:,2),xv(:,3));
 
 % Plot of Mach number over travel
-figure (2)
-c = c_atm(xv(:,3));
-plot(abs(xv(:,2))./c)
-xlabel('time (s)')
-ylabel('Mach number')
-title('Mach number over flight path')
+% figure (2)
+% c = c_atm(xv(:,3));
+% plot(t, abs(xv(:,2))./c)
+% xlabel('time (s)')
+% ylabel('Mach number')
+% title('Mach number over flight path')
+
+max_speed_mach = max(abs(xv(:,2))./c)
+apogee_km = max(xv(:, 3))/1000
 
 function [xvdot, CD] = rockeqn_var(t,xv);
 % The rocket equation where T, P, rho, and g change with
@@ -156,15 +162,14 @@ D = 0.5.*CD.*Ap.*rho.*u.*abs(u);
 a = -ue*mudot./mu - D./mu - gloc*cos(theta);
 end
 
-function [xvdot, CD] = separation_event(t,xv, m_dart, m_booster, Ap_assy, Ap_dart);
+function [xvdot, CD] = separation_event(t,xv, m_dart, m_booster, Ap_assy, Ap_dart, charge_mass);
 % Models the explosive separation event between dart and booster.
-t
 u_dart = xv(1); %velocity of dart
 x_dart = xv(2); % altitude of dart
 u_booster = xv(3); %velocity of booster
 x_booster = xv(4); % altitude of booster
 CD_assy = Cd(0,u_booster,x_booster);
-CD_dart = Cd(0,u_dart,x_dart);
+CD_dart = Cd(1,u_dart,x_dart);
 rho_dart = rho_atm(x_dart); % kg/m^3
 rho_boost = rho_atm(x_booster); % kg/m^3
 gloc_dart = g_atm(x_dart);% local gravitational acceleration
@@ -182,7 +187,7 @@ global initial_piston_d
 piston_area = Ap_dart; % assume piston area is same as dart cross-section
 initialT = 773.15; % K; based on estimate of 500 C burn temp.
 initialV = initial_piston_d * piston_area;
-charge_mass = 1; % g; 0.015 mol of gaseous products per gram charge
+% charge_mass = 2; % g; 0.015 mol of gaseous products per gram charge
 initialP = (charge_mass*0.015 * 8.314 * initialT) / initialV;% N/m^2; nRT / V; R = 8.314 J/(K-mol)
 
 % adiabatic expansion: P*V^gamma = constant
@@ -196,16 +201,16 @@ P = adiabatic_const / pistonV^gamma;
 % Make sure we are still inside the piston
 piston_length = 0.15; % m; 15 cm
 if deltaX > piston_length || (u_dart < 0 || u_booster < 0)
-    P = 0
+    P = 0;
 end
 
 D_assy = 0.5.*CD_assy.*Ap_assy.*rho_boost.*u_booster.*abs(u_booster); 
 D_dart = 0.5.*CD_dart.*Ap_dart.*rho_dart.*u_dart.*abs(u_dart); 
-D_booster = D_assy; % assumption! CD for booster after separation isn't super relavent due to tumbling, so don't expect accuracy here
+D_booster = D_assy - D_dart; % assumption! CD for booster after separation isn't super relavent due to tumbling, so don't expect accuracy here
 u_dart_dot = - D_dart/m_dart - gloc_dart*cos(theta) + P*Ap_dart / m_dart;
 u_booster_dot = - D_booster/m_booster - gloc_boost*cos(theta) - P*Ap_dart / m_booster;
 
 x_dart_dot = u_dart;
 x_booster_dot = u_booster;
-xvdot = [u_dart_dot;x_dart_dot; u_booster_dot; x_booster_dot];
+xvdot = [u_dart_dot; x_dart_dot; u_booster_dot; x_booster_dot];
 end
