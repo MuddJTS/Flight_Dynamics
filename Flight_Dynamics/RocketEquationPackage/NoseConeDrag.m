@@ -1,0 +1,1 @@
+A = importdata(Conical_5_LB.CSV)
