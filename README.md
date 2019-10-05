@@ -1,26 +1,13 @@
-%%%%%%%%%%%%%%%%% Model Description %%%%%%%%%%%%%%%%%%%%%% 
-% This code is used to determiner the trajectory of the rocket. The model
-% is a one dimensional model.  It takes the Motor thrust curve as input and
-% outputs the displacement, velocity, and position of the rocket for the
-% entire flight. This model may be used to determine apogee, optimize mass,
-% find max velocity, determine the velocity off the launch stand, give
-% max loads, mach numbers, optimize the thrust curve, and much more.
+## Model Description
+This code is used to determiner the trajectory of the rocket. The model is a one dimensional model.  It takes the Motor thrust curve as input and outputs the displacement, velocity, and position of the rocket for the entire flight. This model may be used to determine apogee, optimize mass, find max velocity, determine the velocity off the launch stand, give max loads, mach numbers, optimize the thrust curve, and much more.
 
-%%%%%%%%%%%%% Main Scripts %%%%%%%%%%%%%%%%%%%%%%
+## Main Scripts
 
-% MarsRocket.m : this is the main file of the model.  All of the other
-% files are called from this one.
-% this file steps through time and updates the mass, position, velocity, and acceleration of the rocket.  
-% It refferences the thrust curve and the drag coefficient curve of the
-% rocket to calculate the forces.  The drag on the rocket also depends on
-% the mach number (which is a function of pressure, density, temperature)
-% so much of the calculations are simply calculating the speed of sound in
-% air for a given altitude.
+* MarsRocket.m : this is the main file of the model.  All of the other files are called from this one. This file steps through time and updates the mass, position, velocity, and acceleration of the rocket.  It refferences the thrust curve and the drag coefficient curve of the rocket to calculate the forces.  The drag on the rocket also depends on the mach number (which is a function of pressure, density, temperature) so much of the calculations are simply calculating the speed of sound in air for a given altitude.
 
-% SuperLokiTester.m: this is a replica of the MarsRocket model, but
-% contains the size and weight of the Super loki rocket
+* SuperLokiTester.m: this is a replica of the MarsRocket model, but contains the size and weight of the Super loki rocket
 
-%%%%%%%%%%%%% Important Auxiliary functions %%%%%%%%%%%%%%%%%
+## Important Auxiliary functions
 
 % rockeq_var: this is where the equations are actually solved 
 
