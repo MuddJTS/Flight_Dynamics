@@ -9,48 +9,44 @@ This code is used to determiner the trajectory of the rocket. The model is a one
 
 ## Important Auxiliary functions
 
-% rockeq_var: this is where the equations are actually solved 
+* rockeq_var: this is where the equations are actually solved 
 
-%%%%%%%%%%%%% Aerodynamics Functions %%%%%%%%%%%%%%%%
+* ThrustCurveSH: This is where the model refferences the thrust curve of the roket (the thrust curve is plugged in manually in vector form)
 
-% Cd.m: This function outputs the drag coefficient for a given velocity, flight stage, and altitude. 
-% This function holds vectors of all of the drag coefficient
-% information we have on the rocket. this is where you would update the
-% drag coefficient vs mach number information.
+ * Cd.m: This function outputs the drag coefficient for a given velocity, flight stage, and altitude. This function holds vectors of all of the drag coefficient information we have on the rocket. this is where you would update the drag coefficient vs mach number information.
 
-% NoseConeDrag.m: loads and plots information from dozens of CSV files
-% ocntaining data from the nosecone simulations in Rasaero
+## Aerodynamics Functions
 
-% c_atm: returns the speed of sound for a given altitude
+ * Cd.m: This function outputs the drag coefficient for a given velocity, flight stage, and altitude. This function holds vectors of all of the drag coefficient information we have on the rocket. this is where you would update the drag coefficient vs mach number information.
 
-% MaxQ.m plots aerodynamic pressure over time and outputs the maxQ pressure
+* NoseConeDrag.m: loads and plots information from dozens of CSV files ocntaining data from the nosecone simulations in Rasaero
 
-% mu_atm.m: returns viscocity of air at a given altitude
-%nu_atm.m: returns kinematic viscocity
+* c_atm: returns the speed of sound for a given altitude
+
+* MaxQ.m plots aerodynamic pressure over time and outputs the maxQ pressure
+
+* mu_atm.m: returns viscocity of air at a given altitude
+* nu_atm.m: returns kinematic viscocity
 
 
-%%%%%%%%%%%%% Atmosphere calculations (not really important to understand) %%%%%%%%%%%%%%%%
+## Atmosphere calculations (not really important to understand)
 
-% atmo.m: USes all of the atmosphere things below and outputs all
-% atmosphere information for a given composition
+* AtmosTable.mat: this table contains a lookup table for all atmosphere specs for a given altitude.  The rest of the functins in this section are used to create this lookup table
 
-% atmo_p.m: returns partial pressures at a given alt and temp
+* atmo.m: USes all of the atmosphere things below and outputs all atmosphere information for a given composition
 
-% atmo_temp.m: outputs the temperature [K] at a given altitude
+* atmo_p.m: returns partial pressures at a given alt and temp
 
-% atmo_compo.m:  returns atmosphere composition at a given altitude.
-% Currently not used in this sim
+* atmo_temp.m: outputs the temperature [K] at a given altitude
 
-% GenAtmosTable.m: uses all the atmosphere functions to generate an
-% atmosphere table.
+* atmo_compo.m:  returns atmosphere composition at a given altitude. Currently not used in this sim
 
-% AtmosTable.mat: this table contains a lookup table for all atmosphere
-% specs for a given altitude
+* GenAtmosTable.m: uses all the atmosphere functions to generate an atmosphere table.
 
-% k_atm.m outputs the thermal conductivity of air at a given altitude
+* k_atm.m outputs the thermal conductivity of air at a given altitude
 
-% P_atm.m: returns the pressure for a given altitude
+* P_atm.m: returns the pressure for a given altitude
 
-% rho_atm: returns the density for a given altitude
+* rho_atm: returns the density for a given altitude
 
-% T_atm.m returns the temperature for a given altitude
+* T_atm.m returns the temperature for a given altitude
