@@ -56,4 +56,4 @@ end
 mudot = transpose(mudot);
 D = 0.5*CD*Ap*rho.*u.*abs(u);
 a = -ue*mudot./mu - D./mu - gloc*cos(theta);
-end
+

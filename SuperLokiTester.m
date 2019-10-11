@@ -8,7 +8,7 @@
 
 % % % % % % % % % % % % % % Values from loki for testing Apogee = 70713.6 Meters % % % % % % % % % % % % % % % % % % % % % % 
 tf = 150; % end time for simulation
-dt = .1;
+dt = 1;
 Alt = 0;%1401; % altitude MSL of spaceport America
 burntime = 2.1; %to change motor specs, open thrustcurvesh.m. This code assumes separation occurs imediately after burn time ends
 specific_impulse = 228.7; % s Calculate as total impulse/propellant mass

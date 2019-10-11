@@ -3,9 +3,9 @@
 % files and functions. The functions in this file are in charge of
 % calculating acceleration using the rocket force equation, and integrating
 % to get velocity and position.
-    
+
 % Script Inputs
-tf = 250;
+tf = 150;% final time for simulation
 dt = .1; %time step that the system will be solved at
 burntime = 2.1; %to change motor specs, open thrustcurvesh.m. This code assumes separation occurs imediately after burn time ends
 trange = [0 : dt : burntime]; % time before separation
@@ -16,7 +16,7 @@ exit_velocity = specific_impulse * 9.807;
 Ap1 = pi*(7.5*.0254)^2/4; % projected area of booster and dart combo in meeters sq
 Ap2 = pi*(3.3*.0254)^2/4; %projected area of dart
 
-m_dart = 25.65*.4536; %kg 0.453592 kg per lbs
+m_dart = 25.65*.4536; %kg, 0.453592 kg per lbs
 m_booster = 34.8*.4536; %kg without propellant loaded
 m_propellant = 43*.4536; %kg of propellant
 m_initial = m_dart + m_booster + m_propellant; % total mass in kg of entire system
@@ -27,12 +27,11 @@ m_initial = m_dart + m_booster + m_propellant; % total mass in kg of entire syst
 % functions could refference variables and the variables could be changed
 % for different stages in the flight
 % global CD;
-global Ap;
+global Ap; %projected area of vehicle
 global ue; % exit velocity
 global n; % used for what stage rocket is on for drag coefficient calc
 global u;
 Ap = Ap1; % Initial variable setting
-% CD = CD1; %drag coefficient of booster and dart combined
 ue = exit_velocity;
 n = 0;
 
@@ -48,7 +47,7 @@ a1 = afunc(t1, xv1); % Calculate the acceleration vector
 Ap = Ap2;
 n = 1;
 
-ja_burntime = burntime +.001; %"just after burntime" this avoids this step getting any thrust
+ja_burntime = burntime; %"just after burntime" this avoids this step getting any thrust
 trangecoast = [ja_burntime:dt:tf]; % The starting and ending times
 xv_initialcoast = [m_dart, xv1(end,2), xv1(end,3)]; % Initial mass (kilograms), velocity, and altitude (meters).
 % Altitude must be MSL, not AGL (alt is at spaceport america
@@ -60,12 +59,13 @@ xv = [xv1',xv2']';
 a = [a1',a2'];
 % using ode45
 
+figure (1)
 yyaxis right
-ylabel('acceleration (m/s^2), velocity (m/s)')
 plot(t,a','b--',t,xv(:,2),'r',t,xv(:,1),'m') % Plot v, x, mass vs t
+ylabel('acceleration (m/s^2), velocity (m/s)')
 yyaxis left
-ylabel('Position (m)')
 plot(t,xv(:,3),'g') % Plot a
+ylabel('Position (m)')
 legend('altitude','acceleration','velocity','mass')
 
 % Max Q calculation and plot
