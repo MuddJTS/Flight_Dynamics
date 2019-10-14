@@ -14,8 +14,9 @@ T_fc = [6.8:.1:11.8]*10^3;
 t_fc = [0:4/(length(T_fc)-1):4];
 
 % Structures team thrust curve
-T_sa = ones(10).*38000;
-t_sa = [0:4/10:4];
+T_sa = ones(43).*38000;
+t_sa = [0:4/(length(T_sa) - 1):4];
+
 
 % set T and t to the desired thrust curve to be used in model
 T = T_loki;
