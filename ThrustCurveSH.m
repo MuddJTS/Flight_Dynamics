@@ -14,13 +14,13 @@ T_fc = [6.8:.1:11.8]*10^3;
 t_fc = [0:4/(length(T_fc)-1):4];
 
 % Structures team thrust curve
-T_sa = ones(43).*38000;
+T_sa = [repelem(38000/2, 10) zeros(1, 10)];
 t_sa = [0:4/(length(T_sa) - 1):4];
 
 
 % set T and t to the desired thrust curve to be used in model
-T = T_loki;
-t = t_loki;
+T = T_sa;
+t = t_sa;
 thrust = interp1(t, T, time, 'linear', 0);
 
 

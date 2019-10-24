@@ -4,7 +4,7 @@ dt = init_data(2);
 burntime = init_data(3);
 Alt = init_data(4);
 m_booster = init_data(5); % with fuel
-trange = 0:dt:burntime;
+trange = 0:dt:burntime
 
 PRECISION = 0.1; % kilograms
 NUM_DIVISIONS = 4; % number of points checked each loop
@@ -13,28 +13,25 @@ max_alt = 0;
 mass_vec = [];
 alt_vec = [];
 
-step = max_m - min_m;
+step = (max_m - min_m)/ NUM_DIVISIONS;
 
 while (step > PRECISION)
-    step = step / NUM_DIVISIONS
-
     for i = min_m:step:max_m
-        i
-        m_initial = i + m_booster
-        xv0 = [m_initial; 0; Alt] % Initial mass (kilograms), velocity, and altitude (meters).
+        m_initial = i + m_booster;
+        xv0 = [m_initial; 0; Alt]; % Initial mass (kilograms), velocity, and altitude (meters).
         % Altitude must be MSL, not AGL (alt is at spaceport america)
 
-        [~, xv1] = ode45(@rockeqn_var, trange ,xv0) % Integrate the rocket equation
+        [~, xv1] = ode45(@rockeqn_var, trange ,xv0); % Integrate the rocket equation
 
-        ja_burntime = burntime %"just after burntime" this avoids this step getting any thrust
-        trangecoast = ja_burntime:dt:tf % The starting and ending times
-        xv_initialcoast = [i, xv1(end,2), xv1(end,3)] % Initial mass (kilograms), velocity, and altitude (meters).
+        ja_burntime = burntime; %"just after burntime" this avoids this step getting any thrust
+        trangecoast = ja_burntime:dt:tf; % The starting and ending times
+        xv_initialcoast = [i, xv1(end,2), xv1(end,3)]; % Initial mass (kilograms), velocity, and altitude (meters).
         % Altitude must be MSL, not AGL (alt is at spaceport america
-        [~, xv2] = ode45(@rockeqn_var, trangecoast, xv_initialcoast) % Integrate the rocket equation
-        xv = [xv1',xv2']'
-        curr_max_alt = max(xv(:,3))
-        mass_vec = [mass_vec i]
-        alt_vec = [alt_vec curr_max_alt]
+        [~, xv2] = ode45(@rockeqn_var, trangecoast, xv_initialcoast); % Integrate the rocket equation
+        xv = [xv1',xv2']';
+        curr_max_alt = max(xv(:,3));
+        mass_vec = [mass_vec i];
+        alt_vec = [alt_vec curr_max_alt];
 
         if curr_max_alt > max_alt
             max_alt = curr_max_alt;

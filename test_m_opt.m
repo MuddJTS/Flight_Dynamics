@@ -1,5 +1,5 @@
-tf = 150;% final time for simulation
-dt = .1; %time step that the system will be solved at
+tf = 50;% final time for simulation
+dt = 1; %time step that the system will be solved at
 burntime = 2.1; %to change motor specs, open thrustcurvesh.m. This code assumes separation occurs imediately after burn time ends
 Alt = 1401;
 m_booster = 34.8*.4536; %kg without propellant loaded
@@ -18,4 +18,4 @@ n = 0;
 
 
 init_data = [tf, dt, burntime, Alt, m_booster + m_propellant];
-[opt_mass, mass, alt] = calc_m_opt(20*.4536, 30*.4536, init_data)
+[opt_mass, mass, alt] = calc_m_opt(20*.4536, 80*.4536, init_data)
