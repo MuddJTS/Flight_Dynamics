@@ -56,9 +56,9 @@ m = m_dart;
 
 g = 9.81; %m/s^2
 rho = 1.225; %kg/m^3
-m = 25*.46; %mass of dart in kg
+m = 60*.46; %mass of dart in kg 25
 Cd = .97; %common drag coefficient of parachute
-v = 15; %50 feet per second for drogue chute, 15 meters per second
+v = 5.18; %50 feet per second for drogue chute, 15 meters per second
 
 S = 2*g*m/(rho*Cd*v^2) % S is surface area in meters
 
@@ -87,3 +87,6 @@ A = pi*d^2/4; %cross sectional area of dart in inches
 length = vol/A; %length of section required to pack the parachute.  Add some wiggle room to this
 
 length_safe = length*1.3 %safer length to make sure things fit, arbitrary 30 percent added
+
+%% Force on shock chords
+
